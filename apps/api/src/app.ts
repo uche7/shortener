@@ -1,3 +1,4 @@
+import cors from "cors";
 import express, { type Express } from "express";
 import { config } from "./config/env";
 import { createContainer, type Container } from "./container";
@@ -16,6 +17,9 @@ export function createApp(container: Container = createContainer()): Express {
   const app = express();
 
   app.disable("x-powered-by");
+  /* Permissive CORS is intentional: the API is public for programmatic
+   * integration per the assignment brief. */
+  app.use(cors());
   app.use(express.json());
   if (config.nodeEnv !== "test") {
     app.use(requestLogger);

@@ -43,6 +43,21 @@ describe("UrlService.encode", () => {
     expect(await repository.findAll()).toHaveLength(1);
   });
 
+  it("keeps encode idempotent under concurrent calls for the same URL", async () => {
+    const service = new UrlService(
+      repository,
+      slugSequence("aaaaaa", "bbbbbb")
+    );
+
+    const [first, second] = await Promise.all([
+      service.encode("https://indicina.co"),
+      service.encode("https://indicina.co"),
+    ]);
+
+    expect(first.record.shortPath).toBe(second.record.shortPath);
+    expect(await repository.findAll()).toHaveLength(1);
+  });
+
   it("retries on slug collision until a free slug is found", async () => {
     await repository.save(createUrlRecord("taken1", "https://taken.test"));
     const service = new UrlService(
@@ -89,6 +104,36 @@ describe("UrlService.encode", () => {
     const service = new UrlService(repository);
 
     await expect(service.visit("nope42")).rejects.toThrow(UrlNotFoundError);
+  });
+
+  it("lists records newest first", async () => {
+    const service = new UrlService(repository);
+    await repository.save({
+      ...createUrlRecord("older1", "https://old.test"),
+      createdAt: new Date("2026-07-01T00:00:00Z"),
+    });
+    await repository.save({
+      ...createUrlRecord("newer1", "https://new.test"),
+      createdAt: new Date("2026-07-10T00:00:00Z"),
+    });
+
+    const records = await service.list();
+
+    expect(records.map((record) => record.shortPath)).toEqual([
+      "newer1",
+      "older1",
+    ]);
+  });
+
+  it("filters the list case-insensitively on long URLs", async () => {
+    const service = new UrlService(repository);
+    await repository.save(createUrlRecord("aaaaaa", "https://indicina.co"));
+    await repository.save(createUrlRecord("bbbbbb", "https://google.com"));
+
+    const records = await service.list("INDICINA");
+
+    expect(records).toHaveLength(1);
+    expect(records[0]?.shortPath).toBe("aaaaaa");
   });
 
   it("fails with SlugGenerationError when the retry budget is exhausted", async () => {

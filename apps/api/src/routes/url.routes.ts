@@ -1,8 +1,9 @@
 import { Router } from "express";
 import type { UrlController } from "../controllers/url.controller";
-import { validateBody } from "../middlewares/validate-request";
+import { validateBody, validateQuery } from "../middlewares/validate-request";
 import { decodeRequestSchema } from "../validators/decode.validator";
 import { encodeRequestSchema } from "../validators/encode.validator";
+import { listQuerySchema } from "../validators/list.validator";
 
 export function createUrlRouter(controller: UrlController): Router {
   const router = Router();
@@ -10,6 +11,7 @@ export function createUrlRouter(controller: UrlController): Router {
   router.post("/encode", validateBody(encodeRequestSchema), controller.encode);
   router.post("/decode", validateBody(decodeRequestSchema), controller.decode);
   router.get("/statistic/:shortPath", controller.statistics);
+  router.get("/list", validateQuery(listQuerySchema), controller.list);
 
   return router;
 }

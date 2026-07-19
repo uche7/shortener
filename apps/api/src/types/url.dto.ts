@@ -8,6 +8,11 @@ export interface UrlDto {
   lastVisitedAt: string | null;
 }
 
+export interface UrlListDto {
+  urls: UrlDto[];
+  total: number;
+}
+
 export interface UrlStatsDto extends UrlDto {
   longUrlDomain: string;
   ageInDays: number;

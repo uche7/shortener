@@ -24,8 +24,25 @@ export class UrlService {
     private readonly generateSlug: SlugGenerator = defaultSlugGenerator
   ) {}
 
-  /** Idempotent: encoding an already-shortened URL returns its existing record. */
+  private readonly inFlightEncodes = new Map<string, Promise<EncodeResult>>();
+
+  /**
+   * Idempotent: encoding an already-shortened URL returns its existing record.
+   * Concurrent encodes of the same URL share one in-flight promise, so
+   * idempotency holds even when requests interleave between await points.
+   */
   async encode(longUrl: string): Promise<EncodeResult> {
+    const inFlight = this.inFlightEncodes.get(longUrl);
+    if (inFlight) return inFlight;
+
+    const encoding = this.doEncode(longUrl).finally(() => {
+      this.inFlightEncodes.delete(longUrl);
+    });
+    this.inFlightEncodes.set(longUrl, encoding);
+    return encoding;
+  }
+
+  private async doEncode(longUrl: string): Promise<EncodeResult> {
     const existing = await this.urlRepository.findByLongUrl(longUrl);
     if (existing) {
       return { record: existing, wasCreated: false };
@@ -44,6 +61,21 @@ export class UrlService {
       throw new UrlNotFoundError(shortPath);
     }
     return updated;
+  }
+
+  /** Newest first; optional case-insensitive substring match on long URLs. */
+  async list(search?: string): Promise<UrlRecord[]> {
+    const records = await this.urlRepository.findAll();
+    const needle = search?.toLowerCase();
+    const filtered = needle
+      ? records.filter((record) =>
+          record.longUrl.toLowerCase().includes(needle)
+        )
+      : records;
+
+    return filtered.sort(
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+    );
   }
 
   async decode(shortPath: string): Promise<UrlRecord> {

@@ -7,6 +7,7 @@ import { toUrlDto, toUrlStatsDto } from "../helpers/url-mapper";
 import type { UrlService } from "../services/url.service";
 import type { DecodeRequestDto } from "../validators/decode.validator";
 import type { EncodeRequestDto } from "../validators/encode.validator";
+import type { ListQueryDto } from "../validators/list.validator";
 import { sendSuccess } from "../utils/api-response";
 
 export class UrlController {
@@ -39,6 +40,21 @@ export class UrlController {
 
   /* 302 rather than 301: browsers cache 301s permanently, which would
    * bypass the server on repeat visits and break visit counting. */
+  list = async (_req: Request, res: Response): Promise<void> => {
+    const { search } = res.locals.validatedQuery as ListQueryDto;
+    const records = await this.urlService.list(search);
+
+    sendSuccess(res, {
+      message: search
+        ? `Short URLs with long URLs matching "${search}"`
+        : "All short URLs",
+      data: {
+        urls: records.map((record) => toUrlDto(record, config.baseUrl)),
+        total: records.length,
+      },
+    });
+  };
+
   redirect = async (req: Request, res: Response): Promise<void> => {
     const shortPath = this.shortPathParam(req);
     const record = await this.urlService.visit(shortPath);
