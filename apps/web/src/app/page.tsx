@@ -1,5 +1,6 @@
 import { BarChart3, Link2, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { UrlShortener } from "@/features/urls/components/url-shortener";
 
 const highlights = [
   { icon: Link2, label: "Instant short links" },
@@ -19,6 +20,7 @@ export default function HomePage() {
           Paste a link and get a short URL you can share anywhere — with
           creation history, search and per-link analytics built in.
         </p>
+        <UrlShortener />
         <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
           {highlights.map(({ icon: Icon, label }) => (
             <li key={label} className="flex items-center gap-2">
