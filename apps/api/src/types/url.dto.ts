@@ -7,3 +7,11 @@ export interface UrlDto {
   firstVisitedAt: string | null;
   lastVisitedAt: string | null;
 }
+
+export interface UrlStatsDto extends UrlDto {
+  longUrlDomain: string;
+  ageInDays: number;
+  averageVisitsPerDay: number;
+  hasBeenVisited: boolean;
+  daysSinceLastVisit: number | null;
+}

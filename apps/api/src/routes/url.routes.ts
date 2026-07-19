@@ -9,6 +9,7 @@ export function createUrlRouter(controller: UrlController): Router {
 
   router.post("/encode", validateBody(encodeRequestSchema), controller.encode);
   router.post("/decode", validateBody(decodeRequestSchema), controller.decode);
+  router.get("/statistic/:shortPath", controller.statistics);
 
   return router;
 }
