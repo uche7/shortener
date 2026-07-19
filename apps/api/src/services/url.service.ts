@@ -38,6 +38,14 @@ export class UrlService {
     return { record, wasCreated: true };
   }
 
+  async visit(shortPath: string): Promise<UrlRecord> {
+    const updated = await this.urlRepository.recordVisit(shortPath, new Date());
+    if (updated === null) {
+      throw new UrlNotFoundError(shortPath);
+    }
+    return updated;
+  }
+
   async decode(shortPath: string): Promise<UrlRecord> {
     const record = await this.urlRepository.findByShortPath(shortPath);
     if (record === null) {

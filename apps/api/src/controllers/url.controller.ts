@@ -1,6 +1,8 @@
 import type { Request, Response } from "express";
 import { config } from "../config/env";
 import { HTTP_STATUS } from "../constants/http";
+import { SHORT_PATH_PATTERN } from "../constants/url";
+import { UrlNotFoundError } from "../errors/url-not-found-error";
 import { toUrlDto } from "../helpers/url-mapper";
 import type { UrlService } from "../services/url.service";
 import type { DecodeRequestDto } from "../validators/decode.validator";
@@ -33,5 +35,17 @@ export class UrlController {
       message: "Short URL decoded",
       data: toUrlDto(record, config.baseUrl),
     });
+  };
+
+  /* 302 rather than 301: browsers cache 301s permanently, which would
+   * bypass the server on repeat visits and break visit counting. */
+  redirect = async (req: Request, res: Response): Promise<void> => {
+    const shortPath = req.params.shortPath as string;
+    if (!SHORT_PATH_PATTERN.test(shortPath)) {
+      throw new UrlNotFoundError(shortPath);
+    }
+
+    const record = await this.urlService.visit(shortPath);
+    res.redirect(HTTP_STATUS.FOUND, record.longUrl);
   };
 }

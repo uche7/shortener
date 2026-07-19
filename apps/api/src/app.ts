@@ -5,6 +5,7 @@ import { errorHandler } from "./middlewares/error-handler";
 import { notFoundHandler } from "./middlewares/not-found-handler";
 import { requestLogger } from "./middlewares/request-logger";
 import { createApiRouter } from "./routes/index";
+import { createRedirectRouter } from "./routes/redirect.routes";
 
 /**
  * App factory, separate from the HTTP listener so integration tests can
@@ -21,6 +22,7 @@ export function createApp(container: Container = createContainer()): Express {
   }
 
   app.use("/api", createApiRouter(container));
+  app.use("/", createRedirectRouter(container.urlController));
 
   app.use(notFoundHandler);
   app.use(errorHandler);

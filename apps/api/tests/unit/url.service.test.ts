@@ -70,6 +70,27 @@ describe("UrlService.encode", () => {
     await expect(service.decode("nope42")).rejects.toThrow(UrlNotFoundError);
   });
 
+  it("records a visit and returns the updated record", async () => {
+    const service = new UrlService(repository, slugSequence("GeAi9K"));
+    await service.encode("https://indicina.co");
+
+    const first = await service.visit("GeAi9K");
+    const second = await service.visit("GeAi9K");
+
+    expect(first.visitCount).toBe(1);
+    expect(second.visitCount).toBe(2);
+    expect(second.firstVisitedAt).toEqual(first.firstVisitedAt);
+    expect(second.lastVisitedAt?.getTime()).toBeGreaterThanOrEqual(
+      first.lastVisitedAt?.getTime() as number
+    );
+  });
+
+  it("throws UrlNotFoundError when visiting an unknown short path", async () => {
+    const service = new UrlService(repository);
+
+    await expect(service.visit("nope42")).rejects.toThrow(UrlNotFoundError);
+  });
+
   it("fails with SlugGenerationError when the retry budget is exhausted", async () => {
     await repository.save(createUrlRecord("taken1", "https://taken.test"));
     const alwaysColliding: SlugGenerator = () => "taken1";

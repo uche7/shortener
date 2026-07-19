@@ -1,6 +1,5 @@
 import { z } from "zod";
-
-const SHORT_PATH_PATTERN = /^[0-9A-Za-z]+$/;
+import { SHORT_PATH_PATTERN } from "../constants/url";
 
 /** Accepts a bare slug ("GeAi9K", "/GeAi9K") or a full short URL. */
 function toShortPath(value: string): string | null {
