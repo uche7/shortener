@@ -3,6 +3,7 @@ import {
   SHORT_PATH_LENGTH,
 } from "../constants/url";
 import { SlugGenerationError } from "../errors/slug-generation-error";
+import { UrlNotFoundError } from "../errors/url-not-found-error";
 import type { UrlRepository } from "../interfaces/url-repository.interface";
 import { createUrlRecord, type UrlRecord } from "../models/url.model";
 import { generateBase62Slug } from "../utils/base62";
@@ -35,6 +36,14 @@ export class UrlService {
       createUrlRecord(shortPath, longUrl)
     );
     return { record, wasCreated: true };
+  }
+
+  async decode(shortPath: string): Promise<UrlRecord> {
+    const record = await this.urlRepository.findByShortPath(shortPath);
+    if (record === null) {
+      throw new UrlNotFoundError(shortPath);
+    }
+    return record;
   }
 
   private async generateUniqueShortPath(): Promise<string> {

@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { MAX_SLUG_GENERATION_ATTEMPTS } from "../../src/constants/url";
 import { SlugGenerationError } from "../../src/errors/slug-generation-error";
+import { UrlNotFoundError } from "../../src/errors/url-not-found-error";
 import { createUrlRecord } from "../../src/models/url.model";
 import { InMemoryUrlRepository } from "../../src/repositories/in-memory-url.repository";
 import { UrlService, type SlugGenerator } from "../../src/services/url.service";
@@ -52,6 +53,21 @@ describe("UrlService.encode", () => {
     const { record } = await service.encode("https://indicina.co");
 
     expect(record.shortPath).toBe("free22");
+  });
+
+  it("decodes an existing short path back to its record", async () => {
+    const service = new UrlService(repository, slugSequence("GeAi9K"));
+    await service.encode("https://indicina.co");
+
+    const record = await service.decode("GeAi9K");
+
+    expect(record.longUrl).toBe("https://indicina.co");
+  });
+
+  it("throws UrlNotFoundError when decoding an unknown short path", async () => {
+    const service = new UrlService(repository);
+
+    await expect(service.decode("nope42")).rejects.toThrow(UrlNotFoundError);
   });
 
   it("fails with SlugGenerationError when the retry budget is exhausted", async () => {

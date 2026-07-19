@@ -3,6 +3,7 @@ import { config } from "../config/env";
 import { HTTP_STATUS } from "../constants/http";
 import { toUrlDto } from "../helpers/url-mapper";
 import type { UrlService } from "../services/url.service";
+import type { DecodeRequestDto } from "../validators/decode.validator";
 import type { EncodeRequestDto } from "../validators/encode.validator";
 import { sendSuccess } from "../utils/api-response";
 
@@ -20,6 +21,16 @@ export class UrlController {
       message: wasCreated
         ? "Short URL created"
         : "URL was already shortened; returning existing short URL",
+      data: toUrlDto(record, config.baseUrl),
+    });
+  };
+
+  decode = async (req: Request, res: Response): Promise<void> => {
+    const { shortPath } = req.body as DecodeRequestDto;
+    const record = await this.urlService.decode(shortPath);
+
+    sendSuccess(res, {
+      message: "Short URL decoded",
       data: toUrlDto(record, config.baseUrl),
     });
   };
