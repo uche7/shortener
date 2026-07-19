@@ -1,7 +1,13 @@
 import { Router } from "express";
+import type { Container } from "../container";
 import { healthRouter } from "./health.routes";
+import { createUrlRouter } from "./url.routes";
 
-/** Aggregates every /api/* sub-router in one place. */
-export const apiRouter: Router = Router();
+export function createApiRouter(container: Container): Router {
+  const router = Router();
 
-apiRouter.use("/health", healthRouter);
+  router.use("/health", healthRouter);
+  router.use("/", createUrlRouter(container.urlController));
+
+  return router;
+}

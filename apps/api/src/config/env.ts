@@ -1,6 +1,8 @@
 export interface AppConfig {
   readonly nodeEnv: "development" | "production" | "test";
   readonly port: number;
+  /** Origin used when composing short URLs, e.g. http://localhost:4000 */
+  readonly baseUrl: string;
 }
 
 const VALID_ENVS = ["development", "production", "test"] as const;
@@ -27,7 +29,17 @@ function parsePort(value: string | undefined): number {
   return port;
 }
 
+function parseBaseUrl(value: string | undefined, port: number): string {
+  if (value === undefined || value === "") return `http://localhost:${port}`;
+  return value.replace(/\/+$/, "");
+}
+
+const port = parsePort(process.env.PORT);
+
+/* Named API_BASE_URL, not BASE_URL: Vite/Vitest inject BASE_URL="/" into
+ * process.env, which would silently override the default under test. */
 export const config: AppConfig = Object.freeze({
   nodeEnv: parseNodeEnv(process.env.NODE_ENV),
-  port: parsePort(process.env.PORT),
+  port,
+  baseUrl: parseBaseUrl(process.env.API_BASE_URL, port),
 });

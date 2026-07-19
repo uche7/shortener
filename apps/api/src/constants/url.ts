@@ -3,3 +3,5 @@ export const SHORT_PATH_LENGTH = 6;
 
 /** Collision-retry budget before slug generation gives up. */
 export const MAX_SLUG_GENERATION_ATTEMPTS = 5;
+
+export const MAX_URL_LENGTH = 2048;

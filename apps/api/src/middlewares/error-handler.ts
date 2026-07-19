@@ -8,12 +8,30 @@ import { sendError } from "../utils/api-response";
  * Global error handler. Express identifies error middleware by its arity,
  * so all four parameters must be declared even when unused.
  */
+/* body-parser tags JSON syntax failures with this type instead of a class. */
+function isBodyParseError(err: unknown): boolean {
+  return (
+    typeof err === "object" &&
+    err !== null &&
+    "type" in err &&
+    (err as { type: unknown }).type === "entity.parse.failed"
+  );
+}
+
 export function errorHandler(
   err: unknown,
   _req: Request,
   res: Response,
   _next: NextFunction
 ): void {
+  if (isBodyParseError(err)) {
+    sendError(res, {
+      statusCode: HTTP_STATUS.BAD_REQUEST,
+      message: "Malformed JSON body",
+    });
+    return;
+  }
+
   if (err instanceof AppError) {
     sendError(res, {
       statusCode: err.statusCode,
