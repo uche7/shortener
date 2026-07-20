@@ -13,6 +13,7 @@ import {
 import { formatDateTime } from "@/lib/format";
 import type { UrlDto } from "@/types/api";
 import { CopyIconButton } from "./copy-icon-button";
+import { UrlStatsDialog } from "./url-stats-dialog";
 
 export function UrlListTable({ urls }: { urls: UrlDto[] }) {
   return (
@@ -25,7 +26,7 @@ export function UrlListTable({ urls }: { urls: UrlDto[] }) {
             <TableHead className="text-center">Visits</TableHead>
             <TableHead>Created</TableHead>
             <TableHead>Last visit</TableHead>
-            <TableHead className="w-12" aria-label="Actions" />
+            <TableHead className="w-24" aria-label="Actions" />
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -61,7 +62,10 @@ export function UrlListTable({ urls }: { urls: UrlDto[] }) {
                   : "Never"}
               </TableCell>
               <TableCell>
-                <CopyIconButton text={url.shortUrl} />
+                <div className="flex items-center justify-end gap-0.5">
+                  <UrlStatsDialog url={url} />
+                  <CopyIconButton text={url.shortUrl} />
+                </div>
               </TableCell>
             </TableRow>
           ))}
