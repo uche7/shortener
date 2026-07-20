@@ -125,6 +125,10 @@ for ~40 lines. Revisit if the shared surface grows.
   unicode URLs, concurrent encoding.
 - **Coverage thresholds** (90/85/90/90) are enforced in `vitest.config.ts` —
   the suite fails on regression.
+- **Web tests** (Vitest + Testing Library, jsdom) cover the validation schema,
+  formatting utilities, the debounce hook, and the creation form's
+  validation/submit/error flow with the API layer mocked at the feature
+  boundary.
 
 ## Future improvements
 

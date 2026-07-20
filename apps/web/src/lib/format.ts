@@ -1,4 +1,8 @@
-const dateFormatter = new Intl.DateTimeFormat(undefined, {
+/* Locale is pinned so SSR, every client and the test suite render
+ * identically; the product copy is English throughout. */
+const LOCALE = "en-US";
+
+const dateFormatter = new Intl.DateTimeFormat(LOCALE, {
   dateStyle: "medium",
   timeStyle: "short",
 });
@@ -7,8 +11,8 @@ export function formatDateTime(iso: string): string {
   return dateFormatter.format(new Date(iso));
 }
 
-const groupedFormatter = new Intl.NumberFormat(undefined);
-const compactFormatter = new Intl.NumberFormat(undefined, {
+const groupedFormatter = new Intl.NumberFormat(LOCALE);
+const compactFormatter = new Intl.NumberFormat(LOCALE, {
   notation: "compact",
   maximumFractionDigits: 1,
 });
