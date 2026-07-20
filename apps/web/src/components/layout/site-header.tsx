@@ -11,7 +11,7 @@ export function SiteHeader() {
           <span className="flex size-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
             <Link2 className="size-4" />
           </span>
-          ShortLink
+          <span className="max-[400px]:sr-only">ShortLink</span>
         </Link>
         <div className="flex items-center gap-2">
           <MainNav />

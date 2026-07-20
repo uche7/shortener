@@ -21,7 +21,7 @@ export function MainNav() {
           href={href}
           aria-current={pathname === href ? "page" : undefined}
           className={cn(
-            "rounded-md px-3 py-1.5 text-sm transition-colors hover:text-foreground",
+            "rounded-md px-2 py-1.5 text-sm transition-colors hover:text-foreground sm:px-3",
             pathname === href
               ? "bg-accent font-medium text-foreground"
               : "text-muted-foreground"

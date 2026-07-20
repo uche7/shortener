@@ -33,10 +33,12 @@ export function ShortUrlResult({ result }: ShortUrlResultProps) {
             href={shortUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 font-mono text-lg font-medium text-primary hover:underline"
+            className="flex min-w-0 max-w-full items-center gap-2 font-mono text-lg font-medium text-primary hover:underline"
           >
-            {shortUrl}
-            <ExternalLink className="size-4" aria-hidden />
+            <span className="truncate" title={shortUrl}>
+              {shortUrl}
+            </span>
+            <ExternalLink className="size-4 shrink-0" aria-hidden />
           </a>
           <div className="flex items-center gap-2">
             <Badge variant={isNew ? "default" : "secondary"}>
