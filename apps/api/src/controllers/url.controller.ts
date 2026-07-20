@@ -5,6 +5,7 @@ import { SHORT_PATH_PATTERN } from "../constants/url";
 import { UrlNotFoundError } from "../errors/url-not-found-error";
 import { toUrlDto, toUrlStatsDto } from "../helpers/url-mapper";
 import type { UrlService } from "../services/url.service";
+import type { UrlListDto } from "../types/url.dto";
 import type { DecodeRequestDto } from "../validators/decode.validator";
 import type { EncodeRequestDto } from "../validators/encode.validator";
 import type { ListQueryDto } from "../validators/list.validator";
@@ -38,23 +39,24 @@ export class UrlController {
     });
   };
 
-  /* 302 rather than 301: browsers cache 301s permanently, which would
-   * bypass the server on repeat visits and break visit counting. */
   list = async (_req: Request, res: Response): Promise<void> => {
     const { search } = res.locals.validatedQuery as ListQueryDto;
     const records = await this.urlService.list(search);
+    const payload: UrlListDto = {
+      urls: records.map((record) => toUrlDto(record, config.baseUrl)),
+      total: records.length,
+    };
 
     sendSuccess(res, {
       message: search
         ? `Short URLs with long URLs matching "${search}"`
         : "All short URLs",
-      data: {
-        urls: records.map((record) => toUrlDto(record, config.baseUrl)),
-        total: records.length,
-      },
+      data: payload,
     });
   };
 
+  /* 302 rather than 301: browsers cache 301s permanently, which would
+   * bypass the server on repeat visits and break visit counting. */
   redirect = async (req: Request, res: Response): Promise<void> => {
     const shortPath = this.shortPathParam(req);
     const record = await this.urlService.visit(shortPath);
