@@ -5,8 +5,8 @@
 npm-workspaces monorepo with two applications:
 
 ```
-apps/api   Express 5 + TypeScript — owns all data and the short URL origin
-apps/web   Next.js 16 (App Router) — UI consuming the API over HTTP
+apps/api   Express 5 + TypeScript: owns all data and the short URL origin
+apps/web   Next.js 16 (App Router): UI consuming the API over HTTP
 ```
 
 The API is a standalone product (the assignment requires programmatic
@@ -42,32 +42,32 @@ place (slug length, retry budget, URL/search limits, Base62 pattern).
 
 ### Dependency injection
 
-`container.ts` is the composition root — the only file that chooses concrete
+`container.ts` is the composition root: the only file that chooses concrete
 implementations (`InMemoryUrlRepository → UrlService → UrlController`).
 `createApp(container)` receives the graph, and defaults to a fresh container
 per call, which is why integration tests are isolated without reset hooks.
 
 ### Key decisions
 
-- **`UrlRepository` is async although the store is a `Map`** — swapping in
+- **`UrlRepository` is async although the store is a `Map`.** Swapping in
   Redis/PostgreSQL is a new implementation file plus one line in the
   container; no consumer changes.
 - **Random Base62 slugs (6 chars, `crypto.randomInt`) with bounded collision
-  retry** rather than an encoded counter — counters leak creation volume and
-  make slugs guessable. 62⁶ ≈ 5.7 × 10¹⁰ keeps collisions rare; the retry loop
+  retry** rather than an encoded counter, because counters leak creation
+  volume and make slugs guessable. 62⁶ ≈ 5.7 × 10¹⁰ keeps collisions rare; the retry loop
   makes them harmless; slug generation is injectable so tests force collisions
   deterministically.
-- **Encode is idempotent, including under concurrency** — a per-URL in-flight
+- **Encode is idempotent, including under concurrency.** A per-URL in-flight
   promise map prevents the lookup/save interleaving race that would create
   duplicate slugs for the same URL (covered by unit and HTTP-level tests).
-- **Redirects use 302, not 301** — browsers cache 301s permanently, which
+- **Redirects use 302, not 301.** Browsers cache 301s permanently, which
   would bypass the server on repeat visits and silently break visit counting.
-- **`UrlRecord` is immutable** — the repository copies on the way in and out
+- **`UrlRecord` is immutable.** The repository copies on the way in and out
   and produces new records for visit updates; nothing outside it can corrupt
   the store.
-- **App factory separated from the HTTP listener** — Supertest exercises the
+- **App factory separated from the HTTP listener.** Supertest exercises the
   entire middleware pipeline without binding a port.
-- **Express 5 accommodations** — `req.query` is a read-only getter, so
+- **Express 5 accommodations.** `req.query` is a read-only getter, so
   validated query params ride on `res.locals`; inline route-param regexes are
   gone, so slug shape is guarded in the controller.
 
@@ -98,8 +98,9 @@ view refetches automatically. The list uses `keepPreviousData` for
 flicker-free search; stats queries are `enabled`-gated so they fetch only when
 a dialog opens. Visit counts stay live without manual refresh: the list and
 stats queries refetch on window focus (the moment you return from clicking a
-short link) and on a 15-second interval. No optimistic update for encode —
-the server invents the slug, so there is nothing truthful to render early.
+short link) and on a 15-second interval. There is no optimistic update for
+encode because the server invents the slug, so there is nothing truthful to
+render early.
 
 ### Validation
 
@@ -112,8 +113,8 @@ remains authoritative and its 400s surface through the same error path.
 API response types are duplicated in `apps/web/src/types/api.ts` (annotated
 as a mirror; the API is the source of truth). A `packages/shared` workspace
 would eliminate the duplication but forces cross-package TS build
-orchestration (project references or a build step) on both apps — not worth it
-for ~40 lines. Revisit if the shared surface grows.
+orchestration (project references or a build step) on both apps, which is not
+worth it for ~40 lines. Revisit if the shared surface grows.
 
 ## Testing strategy
 
@@ -125,7 +126,7 @@ for ~40 lines. Revisit if the shared surface grows.
   middleware stack: round-trips across endpoints (encode → redirect → stats),
   validation failures, 404 envelopes, malformed JSON, length boundaries,
   unicode URLs, concurrent encoding.
-- **Coverage thresholds** (90/85/90/90) are enforced in `vitest.config.ts` —
+- **Coverage thresholds** (90/85/90/90) are enforced in `vitest.config.ts`;
   the suite fails on regression.
 - **Web tests** (Vitest + Testing Library, jsdom) cover the validation schema,
   formatting utilities, the debounce hook, and the creation form's

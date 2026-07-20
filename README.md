@@ -1,15 +1,15 @@
-# ShortLink — URL Shortener
+# ShortLink URL Shortener
 
 A URL shortening service: paste a long URL, get a short one, share it anywhere,
 and track every visit. Built as a take-home assessment with a focus on clean
 architecture, SOLID principles and test coverage.
 
-**Web UI** — create short links, browse and search your history, and open
+**Web UI**: create short links, browse and search your history, and open
 per-link analytics.
-**JSON API** — every capability is also exposed for programmatic integration.
+**JSON API**: every capability is also exposed for programmatic integration.
 
-All data is kept **in memory** by design (an assignment requirement) — restarting
-the API clears all links.
+All data is kept **in memory** by design (an assignment requirement), so
+restarting the API clears all links.
 
 ## Stack
 
@@ -24,7 +24,7 @@ the API clears all links.
 
 ```
 apps/
-  api/   Express API — encode, decode, statistics, list, redirect
+  api/   Express API: encode, decode, statistics, list, redirect
   web/   Next.js frontend
 docs/
   API.md            endpoint reference with examples
@@ -39,7 +39,7 @@ docs/
 ## Getting started
 
 ```bash
-npm install        # from the repo root — installs every workspace
+npm install        # from the repo root; installs every workspace
 npm run dev        # starts API (http://localhost:4000) and web (http://localhost:3000)
 ```
 
@@ -68,7 +68,7 @@ npm run test:watch -w @shortener/api       # watch mode
 
 The API suite contains **unit tests** (services, repository, slug generation,
 mappers, middleware) and **integration tests** that exercise the full Express
-pipeline through Supertest — including encode/decode round-trips, redirect visit
+pipeline through Supertest, including encode/decode round-trips, redirect visit
 counting, validation failures and concurrency edge cases. Coverage thresholds
 (90% statements / 85% branches / 90% functions / 90% lines) are enforced; the
 suite fails if coverage regresses.

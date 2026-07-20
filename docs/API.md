@@ -59,8 +59,8 @@ Request:
 }
 ```
 
-Errors: `400` — missing/empty `url`, longer than 2048 characters, or not a
-valid `http(s)` URL.
+Errors: `400` for a missing or empty `url`, one longer than 2048 characters,
+or one that is not a valid `http(s)` URL.
 
 ## POST /api/decode
 
@@ -77,10 +77,10 @@ Request (either form):
 { "shortUrl": "GeAi9K" }
 ```
 
-`200 OK` — same `data` shape as encode.
+`200 OK` with the same `data` shape as encode.
 
-Errors: `400` — input contains no plausible short path; `404` — unknown short
-path.
+Errors: `400` if the input contains no plausible short path; `404` for an
+unknown short path.
 
 ## GET /api/statistic/{url_path}
 
@@ -113,7 +113,7 @@ Derived fields: `ageInDays` (whole days since creation),
 `averageVisitsPerDay` (visits ÷ age, minimum age of 1 day),
 `daysSinceLastVisit` (`null` when never visited).
 
-Errors: `404` — unknown or malformed short path.
+Errors: `404` for an unknown or malformed short path.
 
 ## GET /api/list
 
@@ -135,7 +135,7 @@ Query parameters:
 }
 ```
 
-Errors: `400` — `search` shorter than 3 characters.
+Errors: `400` if `search` is shorter than 3 characters.
 
 ## GET /{url_path}
 
@@ -148,4 +148,4 @@ non-Base62 paths.
 
 ## GET /api/health
 
-`200 OK` with uptime, environment and timestamp — useful as a liveness probe.
+`200 OK` with uptime, environment and timestamp, useful as a liveness probe.
