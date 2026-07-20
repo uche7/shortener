@@ -61,7 +61,7 @@ Both apps run with sensible defaults and need no configuration locally.
 ## Running the tests
 
 ```bash
-npm test                                   # all workspaces (78 tests: 64 API + 14 web)
+npm test                                   # all workspaces (81 tests: 64 API + 17 web)
 npm run test:coverage -w @shortener/api    # with coverage report + enforced thresholds
 npm run test:watch -w @shortener/api       # watch mode
 ```
@@ -73,8 +73,8 @@ counting, validation failures and concurrency edge cases. Coverage thresholds
 (90% statements / 85% branches / 90% functions / 90% lines) are enforced; the
 suite fails if coverage regresses.
 
-The web suite (Vitest + Testing Library) covers the form validation schema,
-formatting utilities, the debounce hook, and the URL creation form's
+The web suite (Vitest + Testing Library) covers the form validation schemas,
+formatting utilities, the debounce hook, and the creation and decode forms'
 validation/submit/error behaviour against a mocked API.
 
 ## Other commands

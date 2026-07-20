@@ -5,6 +5,10 @@ export function encodeUrl(url: string): Promise<ApiResult<UrlDto>> {
   return apiClient.post<UrlDto>("/api/encode", { url });
 }
 
+export function decodeUrl(shortUrl: string): Promise<ApiResult<UrlDto>> {
+  return apiClient.post<UrlDto>("/api/decode", { shortUrl });
+}
+
 export function fetchUrls(search?: string): Promise<ApiResult<UrlListDto>> {
   const query = search ? `?search=${encodeURIComponent(search)}` : "";
   return apiClient.get<UrlListDto>(`/api/list${query}`);

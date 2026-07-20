@@ -14,6 +14,12 @@ function isHttpUrl(value: string): boolean {
   }
 }
 
+export const decodeFormSchema = z.object({
+  shortUrl: z.string().trim().min(1, "Paste a short URL to decode"),
+});
+
+export type DecodeFormValues = z.infer<typeof decodeFormSchema>;
+
 export const encodeFormSchema = z.object({
   url: z
     .string()
