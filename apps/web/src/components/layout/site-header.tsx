@@ -1,5 +1,6 @@
 import { Link2 } from "lucide-react";
 import Link from "next/link";
+import { MainNav } from "./main-nav";
 import { ThemeToggle } from "./theme-toggle";
 
 export function SiteHeader() {
@@ -12,7 +13,10 @@ export function SiteHeader() {
           </span>
           ShortLink
         </Link>
-        <ThemeToggle />
+        <div className="flex items-center gap-2">
+          <MainNav />
+          <ThemeToggle />
+        </div>
       </div>
     </header>
   );

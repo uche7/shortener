@@ -3,6 +3,7 @@ import { z } from "zod";
 /* Mirrors apps/api/src/validators/encode.validator.ts (the source of truth)
  * so most invalid input is caught before a network round-trip. */
 export const MAX_URL_LENGTH = 2048;
+export const MIN_SEARCH_LENGTH = 3;
 
 function isHttpUrl(value: string): boolean {
   try {
