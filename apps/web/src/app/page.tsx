@@ -17,8 +17,8 @@ export default function HomePage() {
           Shorten long URLs. Track every visit.
         </h1>
         <p className="max-w-xl text-lg text-muted-foreground">
-          Paste a link and get a short URL you can share anywhere — with
-          creation history, search and per-link analytics built in.
+          Paste a link and get a short URL you can share anywhere with creation
+          history, search and per-link analytics built in.
         </p>
         <UrlShortener />
         <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
