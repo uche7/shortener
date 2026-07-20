@@ -96,8 +96,10 @@ Server state only, via TanStack Query. Query keys come from one factory
 (`urlKeys`), so the encode mutation invalidates `urlKeys.all` and every list
 view refetches automatically. The list uses `keepPreviousData` for
 flicker-free search; stats queries are `enabled`-gated so they fetch only when
-a dialog opens. No optimistic update for encode — the server invents the slug,
-so there is nothing truthful to render early.
+a dialog opens. Visit counts stay live without manual refresh: the list and
+stats queries refetch on window focus (the moment you return from clicking a
+short link) and on a 15-second interval. No optimistic update for encode —
+the server invents the slug, so there is nothing truthful to render early.
 
 ### Validation
 
