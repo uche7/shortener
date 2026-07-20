@@ -38,7 +38,7 @@ export function UrlSearchInput({ value, onChange }: UrlSearchInputProps) {
         aria-live="polite"
       >
         {tooShort
-          ? `Keep typing — search needs at least ${MIN_SEARCH_LENGTH} characters`
+          ? `Keep typing, search needs at least ${MIN_SEARCH_LENGTH} characters`
           : ""}
       </p>
     </div>

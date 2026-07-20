@@ -17,7 +17,7 @@ const compactFormatter = new Intl.NumberFormat(LOCALE, {
   maximumFractionDigits: 1,
 });
 
-/** 1284 → "1,284", 12930 → "12.9K" — grouped below 10k, compact above. */
+/** Grouped below 10k, compact above: 1284 → "1,284", 12930 → "12.9K". */
 export function formatCompactNumber(value: number): string {
   return value < 10_000
     ? groupedFormatter.format(value)

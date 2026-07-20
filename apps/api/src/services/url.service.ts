@@ -55,6 +55,7 @@ export class UrlService {
     return { record, wasCreated: true };
   }
 
+  /** Counts a visit and returns the updated record. */
   async visit(shortPath: string): Promise<UrlRecord> {
     const updated = await this.urlRepository.recordVisit(shortPath, new Date());
     if (updated === null) {
@@ -78,6 +79,7 @@ export class UrlService {
     );
   }
 
+  /** Resolves a short path back to its record without counting a visit. */
   async decode(shortPath: string): Promise<UrlRecord> {
     const record = await this.urlRepository.findByShortPath(shortPath);
     if (record === null) {
