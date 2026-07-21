@@ -2,6 +2,10 @@ import { z } from "zod";
 import { MAX_URL_LENGTH } from "../constants/url";
 
 const ALLOWED_PROTOCOLS = ["http:", "https:"];
+/* Rejected explicitly rather than left to whatever downstream consumer
+ * (e.g. the HTTP client setting the redirect Location header) happens to
+ * reject control characters first. */
+const CONTROL_CHARACTER_PATTERN = /[\x00-\x1F\x7F]/;
 
 function isHttpUrl(value: string): boolean {
   try {
@@ -17,6 +21,10 @@ export const encodeRequestSchema = z.object({
     .trim()
     .min(1, "url must not be empty")
     .max(MAX_URL_LENGTH, `url must be at most ${MAX_URL_LENGTH} characters`)
+    .refine(
+      (value) => !CONTROL_CHARACTER_PATTERN.test(value),
+      "url must not contain control characters"
+    )
     .refine(isHttpUrl, "url must be a valid http(s) URL"),
 });
 

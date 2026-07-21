@@ -60,6 +60,10 @@ per call, which is why integration tests are isolated without reset hooks.
 - **Encode is idempotent, including under concurrency.** A per-URL in-flight
   promise map prevents the lookup/save interleaving race that would create
   duplicate slugs for the same URL (covered by unit and HTTP-level tests).
+  This map lives on the service instance, so the guarantee holds within one
+  process but not across horizontally-scaled replicas; a shared store
+  (Redis `SETNX`, a distributed lock) would be needed to extend it, the same
+  seam the repository itself already anticipates.
 - **Redirects use 302, not 301.** Browsers cache 301s permanently, which
   would bypass the server on repeat visits and silently break visit counting.
 - **`UrlRecord` is immutable.** The repository copies on the way in and out

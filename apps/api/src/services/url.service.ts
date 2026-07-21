@@ -24,6 +24,9 @@ export class UrlService {
     private readonly generateSlug: SlugGenerator = defaultSlugGenerator
   ) {}
 
+  /* Per-process only: this map is not shared across API instances, so the
+   * dedupe below (and the idempotency guarantee it protects) holds within
+   * one process but not across horizontally-scaled replicas. */
   private readonly inFlightEncodes = new Map<string, Promise<EncodeResult>>();
 
   /**

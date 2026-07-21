@@ -14,8 +14,20 @@ function isHttpUrl(value: string): boolean {
   }
 }
 
+/* Loose on purpose: the server is authoritative on what counts as a valid
+ * short URL or slug (it accepts either shape). This only catches input that
+ * plainly cannot be either, so the user doesn't wait on a round trip for it. */
+const PLAUSIBLE_SHORT_URL_PATTERN = /[0-9A-Za-z]/;
+
 export const decodeFormSchema = z.object({
-  shortUrl: z.string().trim().min(1, "Paste a short URL to decode"),
+  shortUrl: z
+    .string()
+    .trim()
+    .min(1, "Paste a short URL to decode")
+    .refine(
+      (value) => PLAUSIBLE_SHORT_URL_PATTERN.test(value),
+      "Enter a short URL or its path, e.g. GeAi9K"
+    ),
 });
 
 export type DecodeFormValues = z.infer<typeof decodeFormSchema>;

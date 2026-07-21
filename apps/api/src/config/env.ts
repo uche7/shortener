@@ -31,7 +31,14 @@ function parsePort(value: string | undefined): number {
 
 function parseBaseUrl(value: string | undefined, port: number): string {
   if (value === undefined || value === "") return `http://localhost:${port}`;
-  return value.replace(/\/+$/, "");
+
+  const trimmed = value.replace(/\/+$/, "");
+  try {
+    new URL(trimmed);
+  } catch {
+    throw new Error(`Invalid API_BASE_URL "${value}". Expected a full URL`);
+  }
+  return trimmed;
 }
 
 const port = parsePort(process.env.PORT);

@@ -1,8 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { encodeFormSchema, MAX_URL_LENGTH } from "@/features/urls/validation";
+import {
+  decodeFormSchema,
+  encodeFormSchema,
+  MAX_URL_LENGTH,
+} from "@/features/urls/validation";
 
 function firstError(input: string): string | undefined {
   const result = encodeFormSchema.safeParse({ url: input });
+  return result.success ? undefined : result.error.issues[0]?.message;
+}
+
+function firstDecodeError(input: string): string | undefined {
+  const result = decodeFormSchema.safeParse({ shortUrl: input });
   return result.success ? undefined : result.error.issues[0]?.message;
 }
 
@@ -33,4 +42,27 @@ describe("encodeFormSchema", () => {
     const tooLong = `https://example.com/${"a".repeat(MAX_URL_LENGTH)}`;
     expect(firstError(tooLong)).toMatch(/at most/);
   });
+});
+
+describe("decodeFormSchema", () => {
+  it("accepts a full short URL or a bare slug", () => {
+    expect(
+      decodeFormSchema.safeParse({ shortUrl: "http://localhost:4000/GeAi9K" })
+        .success
+    ).toBe(true);
+    expect(decodeFormSchema.safeParse({ shortUrl: "GeAi9K" }).success).toBe(
+      true
+    );
+  });
+
+  it("rejects an empty value with the friendly message", () => {
+    expect(firstDecodeError("   ")).toBe("Paste a short URL to decode");
+  });
+
+  it.each(["!!!", "---", "   .   "])(
+    "rejects %s as not a plausible short URL",
+    (input) => {
+      expect(firstDecodeError(input)).toMatch(/short URL or its path/);
+    }
+  );
 });

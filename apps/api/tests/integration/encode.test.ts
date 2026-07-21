@@ -65,6 +65,7 @@ describe("POST /api/encode", () => {
     ["missing protocol", "indicina.co"],
     ["unsupported protocol", "ftp://indicina.co"],
     ["empty string", ""],
+    ["embedded CRLF", "https://indicina.co/\r\nX-Injected: true"],
   ])("rejects an invalid url (%s) with a 400", async (_label, url) => {
     const response = await request(app).post("/api/encode").send({ url });
 

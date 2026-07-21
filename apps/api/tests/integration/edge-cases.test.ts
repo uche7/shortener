@@ -69,6 +69,14 @@ describe("API edge cases", () => {
     expect(response.body.success).toBe(false);
   });
 
+  it("allows cross-origin requests via CORS", async () => {
+    const response = await request(app)
+      .get("/api/health")
+      .set("Origin", "https://example.com");
+
+    expect(response.headers["access-control-allow-origin"]).toBe("*");
+  });
+
   it("creates a single record when the same URL is encoded concurrently", async () => {
     const responses = await Promise.all(
       Array.from({ length: 5 }, () =>
